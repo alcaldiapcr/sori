@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SORI · Sistema Operativo de Recursos Integrales</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255,255,255,0.94);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px -10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+            padding: 2rem 1.5rem 2rem 1.5rem;
+            backdrop-filter: blur(2px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #d4af37;
+            display: inline-block;
+            width: 100%;
+        }
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #1e3a5f;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            color: #2c5a7a;
+            font-weight: 600;
+            margin-top: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .circle-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 550px;
+            margin: 20px 0;
+        }
+
+        /* Escudo central */
+        .shield-center {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 0 5px rgba(212,175,55,0.7);
+            z-index: 10;
+            background-color: #fef9e6;
+        }
+        .shield-center img {
+            width: 170px;
+            height: auto;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        /* Botones radiales */
+        .radial-buttons {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 480px;
+            height: 480px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .menu-btn {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            background: white;
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 18px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            pointer-events: auto;
+            border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(2px);
+            background: rgba(255,255,255,0.95);
+            font-weight: 600;
+            color: #1e3a5f;
+            text-decoration: none;
+            gap: 6px;
+        }
+        .menu-btn i {
+            font-size: 2.3rem;
+            color: #d4af37;
+            margin-bottom: 5px;
+        }
+        .menu-btn span {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .menu-btn small {
+            font-size: 0.65rem;
+            color: #4b6e8a;
+        }
+        .menu-btn:hover {
+            transform: scale(1.07);
+            background: #fffbee;
+            border-color: #ffcd7e;
+            box-shadow: 0 18px 28px rgba(0,0,0,0.15);
+        }
+
+        /* Posiciones circulares para 10 botones */
+        .btn-0 { top: 10%; left: 50%; transform: translate(-50%, -50%); }
+        .btn-1 { top: 27%; left: 82%; transform: translate(-50%, -50%); }
+        .btn-2 { top: 55%; left: 92%; transform: translate(-50%, -50%); }
+        .btn-3 { top: 80%; left: 75%; transform: translate(-50%, -50%); }
+        .btn-4 { top: 88%; left: 45%; transform: translate(-50%, -50%); }
+        .btn-5 { top: 75%; left: 20%; transform: translate(-50%, -50%); }
+        .btn-6 { top: 52%; left: 5%; transform: translate(-50%, -50%); }
+        .btn-7 { top: 28%; left: 15%; transform: translate(-50%, -50%); }
+        .btn-8 { top: 18%; left: 32%; transform: translate(-50%, -50%); }
+        .btn-9 { top: 18%; left: 68%; transform: translate(-50%, -50%); }
+
+        @media (max-width: 850px) {
+            .radial-buttons { width: 400px; height: 400px; }
+            .menu-btn { width: 90px; height: 90px; }
+            .menu-btn i { font-size: 1.8rem; }
+            .menu-btn span { font-size: 0.7rem; }
+            .shield-center { width: 150px; height: 150px; }
+            .shield-center img { width: 130px; }
+        }
+        @media (max-width: 650px) {
+            .radial-buttons { width: 320px; height: 320px; }
+            .menu-btn { width: 75px; height: 75px; }
+            .menu-btn i { font-size: 1.5rem; }
+            .menu-btn span { font-size: 0.65rem; }
+            .menu-btn small { display: none; }
+            .shield-center { width: 120px; height: 120px; }
+        }
+
+        .footer-sori {
+            text-align: center;
+            margin-top: 2.2rem;
+            font-size: 0.7rem;
+            color: #5c6f87;
+            border-top: 1px solid #cddfe7;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header">
+        <h1>SORI · Sistema Operativo de Recursos Integrales</h1>
+        <p>Municipio de Puerto Carreño · Gestión Transparente</p>
+    </div>
+
+    <div class="circle-container">
+        <div class="shield-center">
+            <img src="img/escudo-municipio.jpg" alt="Escudo Puerto Carreño" onerror="this.src='https://via.placeholder.com/170?text=SORI'">
+        </div>
+
+        <div class="radial-buttons">
+            <!-- 1. Rueda dentada: Ingresos -->
+            <div class="menu-btn btn-0" data-modulo="ingresos">
+                <i class="fas fa-cog"></i>
+                <span>Ingresos</span>
+                <small>Rentas, tributos</small>
+            </div>
+            <!-- 2. Casa: Predial -->
+            <div class="menu-btn btn-1" data-modulo="predial">
+                <i class="fas fa-home"></i>
+                <span>Predial</span>
+                <small>Impuesto inmuebles</small>
+            </div>
+            <!-- 3. Caja con $: Tesorería -->
+            <div class="menu-btn btn-2" data-modulo="tesoreria">
+                <i class="fas fa-cash-register"></i>
+                <span>Tesorería</span>
+                <small>Recaudo, pagos</small>
+            </div>
+            <!-- 4. Ficha con números: Presupuesto -->
+            <div class="menu-btn btn-3" data-modulo="presupuesto">
+                <i class="fas fa-calculator"></i>
+                <span>Presupuesto</span>
+                <small>Ejecución, rubros</small>
+            </div>
+            <!-- 5. Calculadora: Contabilidad -->
+            <div class="menu-btn btn-4" data-modulo="contabilidad">
+                <i class="fas fa-chart-pie"></i>
+                <span>Contabilidad</span>
+                <small>Asientos, cierre</small>
+            </div>
+            <!-- 6. Documento con check: Contratación -->
+            <div class="menu-btn btn-5" data-modulo="contratacion">
+                <i class="fas fa-file-signature"></i>
+                <span>Contratación</span>
+                <small>Procesos, órdenes</small>
+            </div>
+            <!-- 7. Carrito montacargas: Almacén -->
+            <div class="menu-btn btn-6" data-modulo="almacen">
+                <i class="fas fa-warehouse"></i>
+                <span>Almacén</span>
+                <small>Inventarios</small>
+            </div>
+            <!-- 8. Persona sentada en computador: Nómina -->
+            <div class="menu-btn btn-7" data-modulo="nomina">
+                <i class="fas fa-laptop-code"></i>
+                <span>Nómina</span>
+                <small>Empleados, pagos</small>
+            </div>
+            <!-- 9. Impresora con papel: Informes -->
+            <div class="menu-btn btn-8" data-modulo="informes">
+                <i class="fas fa-print"></i>
+                <span>Informes</span>
+                <small>Reportes, balances</small>
+            </div>
+            <!-- 10. Llave: Administrar -->
+            <div class="menu-btn btn-9" data-modulo="admin">
+                <i class="fas fa-key"></i>
+                <span>Administrar</span>
+                <small>Usuarios, roles</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-sori">
+        <i class="fas fa-cloud-upload-alt"></i> SORI · Plataforma segura en la nube
+    </div>
+</div>
+
+<script>
+    // Service Worker para Cloudflare / offline
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swCode = `self.addEventListener('install', e => {
+                e.waitUntil(caches.open('sori-v1').then(cache => cache.addAll(['/','/index.html','https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'])));
+                self.skipWaiting();
+            });
+            self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));`;
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).catch(e => console.log("SW no registrado"));
+        });
+    }
+
+    const acciones = {
+        ingresos: "Módulo Ingresos: Registro de rentas, impuestos y tasas municipales.",
+        predial: "Gestión de Impuesto Predial: Liquidación, histórico y cartera.",
+        tesoreria: "Tesorería: Recaudos, expedición de recibos, pagos proveedores.",
+        presupuesto: "Presupuesto: Apropiaciones, modificaciones, ejecución presupuestal.",
+        contabilidad: "Contabilidad General: PUC, asientos contables, balances.",
+        contratacion: "Contratación: Procesos de compras, contratos supervisión.",
+        almacen: "Almacén e Inventarios: Entradas, salidas, bienes devolutivos.",
+        nomina: "Nómina: Liquidación de sueldos, seguridad social, deducciones.",
+        informes: "Informes financieros y de gestión: reportes personalizados.",
+        admin: "Administración: Gestión de usuarios, roles, parámetros del sistema."
+    };
+
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modulo = btn.getAttribute('data-modulo');
+            if(modulo && acciones[modulo]) {
+                alert("📌 " + acciones[modulo] + "\n\n🛠️ Demo - Próximamente módulo dedicado.");
+            } else {
+                alert("Acceso directo a " + btn.innerText.trim());
+            }
+        });
+    });
+</script>
+</body>
+</html>
