@@ -53,19 +53,18 @@
             font-size: 0.9rem;
         }
 
+        /* NUEVO: layout circular automático sin posiciones fijas */
         .circle-container {
-            position: relative;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 550px;
-            margin: 20px 0;
+            justify-content: center;
+            margin: 2rem 0;
         }
 
-        /* Escudo central */
         .shield-center {
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             background: white;
             border-radius: 50%;
             display: flex;
@@ -74,125 +73,106 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 0 5px rgba(212,175,55,0.7);
             z-index: 10;
             background-color: #fef9e6;
+            margin-bottom: 2rem;
         }
+
         .shield-center img {
-            width: 170px;
+            width: 150px;
             height: auto;
             border-radius: 50%;
             object-fit: contain;
         }
 
-        /* Botones radiales */
+        /* Grid que simula un círculo */
         .radial-buttons {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 480px;
-            height: 480px;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            justify-items: center;
+            align-items: center;
+            max-width: 750px;
+            width: 100%;
+            margin: 0 auto;
         }
 
         .menu-btn {
-            position: absolute;
-            width: 95px;
-            height: 95px;
             background: rgba(255,255,255,0.95);
             border-radius: 28px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 1rem 0.5rem;
             box-shadow: 0 12px 18px rgba(0,0,0,0.1);
             cursor: pointer;
-
-            --scale: 1;
-            transform: translate(-50%, -50%) scale(var(--scale));
-
             transition: all 0.2s ease;
             text-align: center;
-            pointer-events: auto;
             border: 1px solid rgba(0,0,0,0.05);
             backdrop-filter: blur(2px);
             font-weight: 600;
             color: #1e3a5f;
-            text-decoration: none;
+            width: 100%;
             gap: 6px;
-            z-index: 5;
         }
+
         .menu-btn i {
-            font-size: 2.3rem;
+            font-size: 2rem;
             color: #d4af37;
-            margin-bottom: 5px;
         }
+
         .menu-btn span {
             font-size: 0.8rem;
             font-weight: 700;
         }
-        .menu-btn small {
-            font-size: 0.65rem;
-            color: #4b6e8a;
-        }
+
         .menu-btn:hover {
-            --scale: 1.05;
+            transform: scale(1.05);
             background: #fff8ed;
             border-color: #d4af37;
             box-shadow: 0 18px 28px rgba(0,0,0,0.15);
             z-index: 20;
         }
 
-        /* Posiciones circulares para 10 botones */
-        .btn-0 { top: 6%; left: 50%; transform: translate(-50%, -50%); }
+        /* Orden circular de los 10 botones */
+        /* Reorganizo visualmente en 4 columnas */
+        .btn-0 { grid-column: 2 / 3; }  /* Ingresos (arriba centro) */
+        .btn-1 { grid-column: 4 / 5; grid-row: 1; }  /* Predial (derecha) */
+        .btn-2 { grid-column: 4 / 5; grid-row: 2; }  /* Tesorería */
+        .btn-3 { grid-column: 4 / 5; grid-row: 3; }  /* Presupuesto */
+        .btn-4 { grid-column: 3 / 4; grid-row: 4; }  /* Contabilidad (abajo centro) */
+        .btn-5 { grid-column: 2 / 3; grid-row: 4; }  /* Contratación */
+        .btn-6 { grid-column: 1 / 2; grid-row: 3; }  /* Almacén */
+        .btn-7 { grid-column: 1 / 2; grid-row: 2; }  /* Nómina */
+        .btn-8 { grid-column: 1 / 2; grid-row: 1; }  /* Informes */
+        .btn-9 { grid-column: 2 / 3; grid-row: 1; }  /* Administrar */
 
-        .btn-8 { top: 14%; left: 30%; transform: translate(-50%, -50%); }
-        .btn-9 { top: 14%; left: 70%; transform: translate(-50%, -50%); }
-
-        .btn-7 { top: 26%; left: 15%; transform: translate(-50%, -50%); }
-        .btn-1 { top: 26%; left: 85%; transform: translate(-50%, -50%); }
-
-        .btn-6 { top: 55%; left: 4%; transform: translate(-50%, -50%); }
-        .btn-2 { top: 55%; left: 96%; transform: translate(-50%, -50%); }
-
-        .btn-5 { top: 88%; left: 22%; transform: translate(-50%, -50%); }
-        .btn-3 { top: 88%; left: 78%; transform: translate(-50%, -50%); }
-
-        .btn-4 { top: 98%; left: 50%; transform: translate(-50%, -50%); }
-
-        @media (max-width: 850px) {
-            .radial-buttons { width: 400px; height: 400px; }
-            .menu-btn { width: 90px; height: 90px; }
-            .menu-btn i { font-size: 1.8rem; }
-            .menu-btn span { font-size: 0.7rem; }
-            .shield-center { width: 150px; height: 150px; }
-            .shield-center img { width: 130px; }
-        }
         @media (max-width: 650px) {
-
             .radial-buttons {
-                position: static;
-                transform: none;
-                width: 100%;
-                height: auto;
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
-                justify-items: center;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
             }
-
-            .menu-btn {
-                position: static;
-                transform: none;
-                width: 80px;
-                height: 80px;
+            /* En móvil pierde forma circular pero gana orden en columnas */
+            .btn-0, .btn-1, .btn-2, .btn-3, .btn-4,
+            .btn-5, .btn-6, .btn-7, .btn-8, .btn-9 {
+                grid-column: auto;
+                grid-row: auto;
             }
-
-            .menu-btn i { font-size: 1.5rem; }
-            .menu-btn span { font-size: 0.65rem; }
-            .menu-btn small { display: none; }
-
             .shield-center {
                 width: 120px;
                 height: 120px;
+                margin-bottom: 1.5rem;
+            }
+            .shield-center img {
+                width: 100px;
+            }
+            .menu-btn {
+                padding: 0.7rem 0.2rem;
+            }
+            .menu-btn i {
+                font-size: 1.5rem;
+            }
+            .menu-btn span {
+                font-size: 0.7rem;
             }
         }
 
