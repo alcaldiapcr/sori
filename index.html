@@ -60,16 +60,19 @@
             align-items: center;
             justify-content: center;
             padding: 1.2rem 0.5rem;
+            box-shadow: 0 12px 18px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(2px);
             font-weight: 600;
             color: #1e3a5f;
             gap: 8px;
         }
         .menu-btn i { font-size: 2.2rem; color: #d4af37; }
-        .menu-btn span { font-size: 0.85rem; }
-        .menu-btn:hover { transform: translateY(-5px); background: #fff8ed; }
+        .menu-btn span { font-size: 0.85rem; font-weight: 700; }
+        .menu-btn:hover { transform: translateY(-5px); background: #fff8ed; border-color: #d4af37; box-shadow: 0 18px 28px rgba(0,0,0,0.15); }
         .admin-rectangle {
             grid-column: 2 / 3;
             background: #1e3a5f;
@@ -79,8 +82,9 @@
             gap: 12px;
             padding: 0.8rem;
         }
-        .admin-rectangle i { color: #d4af37; }
-        .admin-rectangle span { color: white; }
+        .admin-rectangle i { color: #d4af37; font-size: 1.8rem; }
+        .admin-rectangle span { color: white; font-size: 1rem; }
+        .admin-rectangle:hover { background: #143049; transform: translateY(-3px); }
         .footer-sori { text-align: center; margin-top: 2rem; font-size: 0.7rem; color: #5c6f87; border-top: 1px solid #cddfe7; padding-top: 1rem; }
         
         .content-area {
@@ -142,7 +146,7 @@
         .close-modal { float: right; font-size: 28px; cursor: pointer; }
         @media (max-width: 650px) {
             .grid-buttons { gap: 0.8rem; }
-            .menu-btn { padding: 0.8rem 0.2rem; }
+            .menu-btn { padding: 0.8rem 0.2rem; box-shadow: 0 6px 10px rgba(0,0,0,0.08); }
             .menu-btn i { font-size: 1.5rem; }
             .title-group h1 { font-size: 1.2rem; }
         }
