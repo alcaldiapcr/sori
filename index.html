@@ -211,59 +211,24 @@
         contentArea.style.display = 'block';
     }
 
-    // Cabeceras para cada exportación Oracle (no vienen en el archivo)
-    const CSV_HEADERS = {
-        'data/predial_real.csv':    ['CHIP','NOMBRE','TELEFONO','ESTADO','FECHA_INGRESO','AVALUO','AREA','FECHA_MOD','USUARIO','CHIP2','C11','C12','C13','MATRICULA','C14'],
-        'data/ingresos_reales.csv': ['VIGENCIA','NUM','TIPO','SUBTIPO','FECHA','CONTRATO','DESCRIPCION','MOV_TIPO','PROVEEDOR','FECHA_MOV','VALOR_ENTRADA','VALOR_SALIDA']
-    };
-
     async function loadCSV(url, title) {
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error(`No se pudo cargar el archivo (${response.status})`);
             const text = await response.text();
-
-            // Filtrar línea SQL> y líneas vacías
             const lines = text.split('\n').filter(l => l.trim() && !l.startsWith('SQL>'));
-            if (lines.length < 1) throw new Error('Archivo sin datos');
-
-            const headers = CSV_HEADERS[url] || [];
-            let rows = [];
-
-            if (url.includes('ingresos')) {
-                // Formato de 3 líneas: cabecera / descripción / movimiento
-                let i = 0;
-                while (i < lines.length) {
-                    const parts = lines[i].split(',').map(p => p.trim());
-                    if (parts[0] === '001' && parts.length >= 4) {
-                        const vig = parts[1], num = parts[2], tipo = parts[3],
-                              subtipo = parts[4]||'', fecha = parts[5]||'', contrato = parts[6]||'';
-                        let desc = '', movTipo = '', prov = '', fMov = '', ent = '', sal = '';
-                        if (i+1 < lines.length && !lines[i+1].startsWith('001')) {
-                            desc = lines[i+1].trim().substring(0, 80); i++;
-                        }
-                        if (i+1 < lines.length && !lines[i+1].startsWith('001')) {
-                            const m = lines[i+1].split(',').map(p => p.trim());
-                            movTipo=m[0]||''; prov=m[3]||''; fMov=m[6]||''; ent=m[7]||''; sal=m[8]||''; i++;
-                        }
-                        rows.push([vig,num,tipo,subtipo,fecha,contrato,desc,movTipo,prov,fMov,ent,sal]);
-                    }
-                    i++;
-                }
-            } else {
-                // Formato plano (predial): saltar columna MUN_ID (siempre 001)
-                rows = lines.map(l => l.split(',').map(p => p.trim()).slice(1));
-            }
-
+            if (lines.length < 2) throw new Error('CSV sin datos');
+            const data = lines.map(l => l.split(','));
+            const headers = data[0];
+            const rows = data.slice(1);
             let html = `<h3>📋 ${title}</h3><div style="overflow-x:auto;"><table class="content-table"><thead><tr>`;
-            headers.forEach(h => html += `<th>${h}</th>`);
-            html += `</tr></thead><tbody>`;
+            headers.forEach(h => html += `<th>${h.trim().substring(0, 30)}</th>`);
+            html += `</thead><tbody>`;
             rows.slice(0, 50).forEach(row => {
                 html += `<tr>`;
-                row.forEach(cell => html += `<td>${(cell||'').substring(0,60)}</td>`);
-                html += `</tr>`;
+                row.forEach(cell => html += `<td>${(cell || '').trim().substring(0, 60)}</td>`);
+                html += `</td>`;
             });
-            html += `</tbody></table><p>🔍 Mostrando ${Math.min(rows.length,50)} de ${rows.length} registros</p></div>`;
+            html += `</tbody></table><p>🔍 Mostrando ${rows.length} registros (máx 50)</p></div>`;
             dynamicContent.innerHTML = html;
             contentArea.style.display = 'block';
         } catch (error) {
@@ -278,14 +243,22 @@
         });
     });
 
+    const MODULE_PAGES = {
+        ingresos: 'pages/ingresos.html',
+        predial:  'pages/predial.html'
+    };
+
     document.getElementById('ingresarBtn').addEventListener('click', () => {
         const usuario = document.getElementById('usuarioInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
         if (!usuario || !password) { alert("Ingrese usuario y contraseña"); return; }
         modal.style.display = 'none';
-        if (pendingModule === 'ingresos') loadCSV('data/ingresos_reales.csv', 'INGRESOS');
-        else if (pendingModule === 'predial') loadCSV('data/predial_real.csv', 'PREDIAL');
-        else showMessage(`🚧 Módulo "${pendingModule}" en construcción.`);
+        const page = MODULE_PAGES[pendingModule];
+        if (page) {
+            window.location.href = page;
+        } else {
+            showMessage(`🚧 Módulo "${pendingModule}" en construcción.`);
+        }
         pendingModule = null;
     });
 

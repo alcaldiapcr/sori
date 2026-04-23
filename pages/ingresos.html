@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SORI · Ingresos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh; padding: 1.5rem;
+        }
+        .main-container {
+            max-width: 1200px; margin: 0 auto;
+            background: rgba(255,255,255,0.94);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px -10px rgba(0,0,0,0.3);
+            padding: 2rem 1.5rem;
+        }
+        .header {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #d4af37; padding-bottom: 0.75rem;
+        }
+        .shield-small {
+            width: 50px; height: 50px; background: #fef9e6;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0;
+        }
+        .shield-small img { width: 42px; border-radius: 50%; }
+        .title-group h1 { font-size: 1.3rem; color: #1e3a5f; }
+        .title-group p { color: #2c5a7a; font-size: 0.78rem; }
+        .btn-back {
+            margin-left: auto; background: #1e3a5f; color: white;
+            border: none; border-radius: 20px; padding: 8px 16px;
+            cursor: pointer; font-size: 0.82rem; text-decoration: none;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-back:hover { background: #16304f; }
+
+        /* FILTERS */
+        .filters-bar {
+            display: flex; gap: 0.75rem; margin-bottom: 0.75rem;
+            align-items: center; flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1; min-width: 200px;
+            display: flex; align-items: center; gap: 0.5rem;
+            background: #f5f7fa; border: 1.5px solid #dde3ec;
+            border-radius: 40px; padding: 0.4rem 1rem;
+        }
+        .search-box input {
+            border: none; background: transparent; outline: none;
+            width: 100%; font-size: 0.85rem; color: #1e3a5f;
+        }
+        .search-box i { color: #8a9bb0; }
+        .filter-wrap { position: relative; display: flex; align-items: center; }
+        .filter-select {
+            appearance: none;
+            background: #f5f7fa; border: 1.5px solid #dde3ec;
+            border-radius: 40px; padding: 0.42rem 2.2rem 0.42rem 1rem;
+            font-size: 0.82rem; color: #1e3a5f;
+            cursor: pointer; outline: none;
+            transition: border-color 0.2s; min-width: 140px;
+        }
+        .filter-select:focus { border-color: #d4af37; }
+        .filter-select.active { border-color: #d4af37; background: #fef9e6; font-weight: 600; }
+        .filter-arrow {
+            position: absolute; right: 12px; pointer-events: none;
+            color: #8a9bb0; font-size: 0.68rem;
+        }
+        .btn-clear {
+            background: white; border: 1.5px solid #dde3ec;
+            border-radius: 40px; padding: 0.42rem 1rem;
+            font-size: 0.8rem; color: #64748b; cursor: pointer;
+            display: none; align-items: center; gap: 5px; white-space: nowrap;
+        }
+        .btn-clear:hover { border-color: #d4af37; color: #1e3a5f; }
+        .btn-clear.visible { display: flex; }
+        .stats-badge {
+            background: #fef9e6; color: #1e3a5f; border-radius: 20px;
+            padding: 0.35rem 0.9rem; font-size: 0.78rem; font-weight: 600;
+            border: 1px solid #e8d87a; white-space: nowrap;
+        }
+
+        /* TABLE */
+        .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #dde3ec; }
+        table.data-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .data-table thead th {
+            background: #1e3a5f; color: white; padding: 10px 12px;
+            text-align: left; white-space: nowrap; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .data-table tbody tr { border-bottom: 1px solid #eef0f4; }
+        .data-table tbody tr:hover { background: #fef9e6; }
+        .data-table tbody tr:nth-child(even) { background: #f8fafc; }
+        .data-table tbody tr:nth-child(even):hover { background: #fef9e6; }
+        .data-table tbody td {
+            padding: 7px 12px; color: #334155;
+            max-width: 220px; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+        .badge { padding:2px 8px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+        .b-C  { background:#dbeafe; color:#1e40af; }
+        .b-O  { background:#dcfce7; color:#166534; }
+        .b-CPF { background:#ede9fe; color:#5b21b6; }
+        .b-CFF { background:#fce7f3; color:#9d174d; }
+        .b-OTR { background:#f1f5f9; color:#475569; }
+        .b-CIN { background:#fef9c3; color:#854d0e; }
+        .b-ICO { background:#d1fae5; color:#065f46; }
+        .b-def { background:#f1f5f9; color:#475569; }
+
+        /* PAGINATION */
+        .pagination { display:flex; align-items:center; justify-content:center; gap:0.4rem; margin-top:1rem; flex-wrap:wrap; }
+        .page-btn { background:white; border:1.5px solid #dde3ec; border-radius:8px; padding:5px 11px; cursor:pointer; font-size:0.8rem; color:#1e3a5f; font-weight:600; }
+        .page-btn:hover,.page-btn.active { background:#1e3a5f; color:white; border-color:#1e3a5f; }
+        .page-btn:disabled { opacity:0.4; cursor:default; }
+        .page-info { font-size:0.78rem; color:#8a9bb0; }
+
+        .loading { text-align:center; padding:3rem; color:#8a9bb0; }
+        .loading i { font-size:2rem; color:#d4af37; display:block; margin-bottom:0.5rem; }
+        .footer-sori { text-align:center; margin-top:2rem; font-size:0.7rem; color:#5c6f87; border-top:1px solid #cddfe7; padding-top:1rem; }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="header">
+        <div class="shield-small">
+            <img src="../img/escudo-municipio.jpg" alt="Escudo" onerror="this.style.display='none'">
+        </div>
+        <div class="title-group">
+            <h1><i class="fas fa-boxes" style="color:#d4af37"></i> Ingresos</h1>
+            <p>SORI · Municipio de Puerto Carreño</p>
+        </div>
+        <a href="../index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Volver</a>
+    </div>
+
+    <div class="filters-bar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar descripción, contrato, proveedor…" oninput="applyFilters()">
+        </div>
+
+        <div class="filter-wrap">
+            <select class="filter-select" id="filterVigencia" onchange="applyFilters()">
+                <option value="">Vigencia: Todas</option>
+            </select>
+            <i class="fas fa-chevron-down filter-arrow"></i>
+        </div>
+
+        <div class="filter-wrap">
+            <select class="filter-select" id="filterTipo" onchange="applyFilters()">
+                <option value="">Tipo: Todos</option>
+            </select>
+            <i class="fas fa-chevron-down filter-arrow"></i>
+        </div>
+
+        <div class="filter-wrap">
+            <select class="filter-select" id="filterSubtipo" onchange="applyFilters()">
+                <option value="">Subtipo: Todos</option>
+            </select>
+            <i class="fas fa-chevron-down filter-arrow"></i>
+        </div>
+
+        <div class="filter-wrap">
+            <select class="filter-select" id="filterMov" onchange="applyFilters()">
+                <option value="">Movimiento: Todos</option>
+            </select>
+            <i class="fas fa-chevron-down filter-arrow"></i>
+        </div>
+
+        <button class="btn-clear" id="btnClear" onclick="clearFilters()">
+            <i class="fas fa-times"></i> Limpiar
+        </button>
+
+        <div id="statsBadge" class="stats-badge">Cargando…</div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>VIGENCIA</th><th>N°</th><th>TIPO</th><th>SUBTIPO</th>
+                    <th>FECHA</th><th>CONTRATO</th><th>DESCRIPCIÓN</th>
+                    <th>MOV.</th><th>PROVEEDOR</th><th>FECHA MOV.</th>
+                    <th>ENTRADA</th><th>SALIDA</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="12"><div class="loading"><i class="fas fa-spinner fa-spin"></i>Cargando datos…</div></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+
+    <div class="footer-sori"><i class="fas fa-cloud-upload-alt"></i> SORI · Alcaldía de Puerto Carreño, Vichada</div>
+</div>
+
+<script>
+    const PAGE_SIZE = 60;
+    let allRows = [], filteredRows = [], currentPage = 1;
+
+    // Row: [VIG(0), NUM(1), TIPO(2), SUBTIPO(3), FECHA(4), CONTRATO(5), DESC(6), MOV(7), PROV(8), FMOV(9), ENT(10), SAL(11)]
+
+    async function init() {
+        try {
+            const res = await fetch('../data/ingresos_reales.csv');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const text = await res.text();
+            const lines = text.split('\n').filter(l => l.trim() && !l.startsWith('SQL>'));
+
+            let i = 0;
+            while (i < lines.length) {
+                const parts = lines[i].split(',').map(p => p.trim());
+                if (parts[0] === '001' && parts.length >= 4) {
+                    const vig=parts[1], num=parts[2], tipo=parts[3],
+                          subtipo=parts[4]||'', fecha=parts[5]||'', contrato=parts[6]||'';
+                    let desc='', movTipo='', prov='', fMov='', ent='', sal='';
+                    if (i+1 < lines.length && !lines[i+1].trim().startsWith('001')) {
+                        desc = lines[i+1].trim(); i++;
+                    }
+                    if (i+1 < lines.length && !lines[i+1].trim().startsWith('001')) {
+                        const m = lines[i+1].split(',').map(p => p.trim());
+                        movTipo=m[0]||''; prov=m[3]||''; fMov=m[6]||''; ent=m[7]||''; sal=m[8]||''; i++;
+                    }
+                    allRows.push([vig, num, tipo, subtipo, fecha, contrato, desc, movTipo, prov, fMov, ent, sal]);
+                }
+                i++;
+            }
+
+            buildOptions();
+            filteredRows = allRows.slice();
+            render();
+        } catch(e) {
+            document.getElementById('tableBody').innerHTML =
+                `<tr><td colspan="12" style="text-align:center;padding:2rem;color:#991b1b;">⚠️ ${e.message}</td></tr>`;
+            document.getElementById('statsBadge').textContent = 'Error';
+        }
+    }
+
+    function buildOptions() {
+        const fill = (id, idx, label) => {
+            const vals = [...new Set(allRows.map(r => r[idx]).filter(Boolean))].sort();
+            const sel = document.getElementById(id);
+            sel.options[0].text = `${label}: Todos`;
+            vals.forEach(v => sel.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
+        };
+        fill('filterVigencia', 0, 'Vigencia');
+        fill('filterTipo',     2, 'Tipo');
+        fill('filterSubtipo',  3, 'Subtipo');
+        fill('filterMov',      7, 'Movimiento');
+    }
+
+    function badge(val, cls) {
+        return val ? `<span class="badge ${cls}">${val}</span>` : '—';
+    }
+    const TIPO_CLS    = { C:'b-C', O:'b-O' };
+    const SUB_CLS     = { CPF:'b-CPF', CFF:'b-CFF', OTR:'b-OTR' };
+    const MOV_CLS     = { CIN:'b-CIN', ICO:'b-ICO' };
+
+    function applyFilters() {
+        const q   = document.getElementById('searchInput').value.toLowerCase().trim();
+        const vig = document.getElementById('filterVigencia').value;
+        const tip = document.getElementById('filterTipo').value;
+        const sub = document.getElementById('filterSubtipo').value;
+        const mov = document.getElementById('filterMov').value;
+
+        filteredRows = allRows.filter(r => {
+            if (vig && r[0] !== vig) return false;
+            if (tip && r[2] !== tip) return false;
+            if (sub && r[3] !== sub) return false;
+            if (mov && r[7] !== mov) return false;
+            if (q && !r.some(c => (c||'').toLowerCase().includes(q))) return false;
+            return true;
+        });
+
+        currentPage = 1;
+        const hasFilter = q || vig || tip || sub || mov;
+        document.getElementById('btnClear').classList.toggle('visible', !!hasFilter);
+        ['filterVigencia','filterTipo','filterSubtipo','filterMov'].forEach(id => {
+            document.getElementById(id).classList.toggle('active', !!document.getElementById(id).value);
+        });
+        render();
+    }
+
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        ['filterVigencia','filterTipo','filterSubtipo','filterMov'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+        applyFilters();
+    }
+
+    function render() {
+        const total = filteredRows.length;
+        const pages = Math.ceil(total / PAGE_SIZE);
+        const slice = filteredRows.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+
+        document.getElementById('statsBadge').textContent =
+            `${total.toLocaleString('es-CO')} registros · pág ${currentPage}/${pages||1}`;
+
+        const tbody = document.getElementById('tableBody');
+        if (!slice.length) {
+            tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:2rem;color:#8a9bb0;">Sin resultados para los filtros seleccionados.</td></tr>`;
+        } else {
+            tbody.innerHTML = slice.map(r => `<tr>
+                <td>${r[0]||'—'}</td>
+                <td>${r[1]||'—'}</td>
+                <td>${badge(r[2], TIPO_CLS[r[2]]||'b-def')}</td>
+                <td>${badge(r[3], SUB_CLS[r[3]]||'b-def')}</td>
+                <td>${r[4]||'—'}</td>
+                <td>${r[5]||'—'}</td>
+                <td title="${(r[6]||'').replace(/"/g,'&quot;')}">${r[6]||'—'}</td>
+                <td>${badge(r[7], MOV_CLS[r[7]]||'b-def')}</td>
+                <td title="${r[8]||''}">${r[8]||'—'}</td>
+                <td>${r[9]||'—'}</td>
+                <td>${r[10]||'—'}</td>
+                <td>${r[11]||'—'}</td>
+            </tr>`).join('');
+        }
+
+        const pag = document.getElementById('pagination');
+        if (pages <= 1) { pag.innerHTML = ''; return; }
+        let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+        const s=Math.max(1,currentPage-2), e=Math.min(pages,currentPage+2);
+        if (s>1) html+=`<button class="page-btn" onclick="goPage(1)">1</button><span class="page-info">…</span>`;
+        for(let p=s;p<=e;p++) html+=`<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+        if(e<pages) html+=`<span class="page-info">…</span><button class="page-btn" onclick="goPage(${pages})">${pages}</button>`;
+        html+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+        pag.innerHTML = html;
+    }
+
+    function goPage(p) {
+        const pages = Math.ceil(filteredRows.length / PAGE_SIZE);
+        if (p<1||p>pages) return;
+        currentPage = p;
+        render();
+        window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    init();
+</script>
+</body>
+</html>

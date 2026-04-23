@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SORI · Predial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh; padding: 1.5rem;
+        }
+        .main-container {
+            max-width: 1200px; margin: 0 auto;
+            background: rgba(255,255,255,0.94);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px -10px rgba(0,0,0,0.3);
+            padding: 2rem 1.5rem;
+        }
+        .header {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #d4af37; padding-bottom: 0.75rem;
+        }
+        .shield-small {
+            width: 50px; height: 50px; background: #fef9e6;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0;
+        }
+        .shield-small img { width: 42px; border-radius: 50%; }
+        .title-group h1 { font-size: 1.3rem; color: #1e3a5f; }
+        .title-group p { color: #2c5a7a; font-size: 0.78rem; }
+        .btn-back {
+            margin-left: auto; background: #1e3a5f; color: white;
+            border: none; border-radius: 20px; padding: 8px 16px;
+            cursor: pointer; font-size: 0.82rem; text-decoration: none;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-back:hover { background: #16304f; }
+
+        /* FILTERS */
+        .filters-bar {
+            display: flex; gap: 0.75rem; margin-bottom: 0.75rem;
+            align-items: center; flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1; min-width: 200px;
+            display: flex; align-items: center; gap: 0.5rem;
+            background: #f5f7fa; border: 1.5px solid #dde3ec;
+            border-radius: 40px; padding: 0.4rem 1rem;
+        }
+        .search-box input {
+            border: none; background: transparent; outline: none;
+            width: 100%; font-size: 0.85rem; color: #1e3a5f;
+        }
+        .search-box i { color: #8a9bb0; }
+        .filter-wrap { position: relative; display: flex; align-items: center; }
+        .filter-select {
+            appearance: none;
+            background: #f5f7fa; border: 1.5px solid #dde3ec;
+            border-radius: 40px; padding: 0.42rem 2.2rem 0.42rem 1rem;
+            font-size: 0.82rem; color: #1e3a5f;
+            cursor: pointer; outline: none;
+            transition: border-color 0.2s; min-width: 140px;
+        }
+        .filter-select:focus { border-color: #d4af37; }
+        .filter-select.active { border-color: #d4af37; background: #fef9e6; font-weight: 600; }
+        .filter-arrow {
+            position: absolute; right: 12px; pointer-events: none;
+            color: #8a9bb0; font-size: 0.68rem;
+        }
+        .btn-clear {
+            background: white; border: 1.5px solid #dde3ec;
+            border-radius: 40px; padding: 0.42rem 1rem;
+            font-size: 0.8rem; color: #64748b; cursor: pointer;
+            display: none; align-items: center; gap: 5px; white-space: nowrap;
+        }
+        .btn-clear:hover { border-color: #d4af37; color: #1e3a5f; }
+        .btn-clear.visible { display: flex; }
+        .stats-badge {
+            background: #fef9e6; color: #1e3a5f; border-radius: 20px;
+            padding: 0.35rem 0.9rem; font-size: 0.78rem; font-weight: 600;
+            border: 1px solid #e8d87a; white-space: nowrap;
+        }
+
+        /* TABLE */
+        .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #dde3ec; }
+        table.data-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .data-table thead th {
+            background: #1e3a5f; color: white; padding: 10px 12px;
+            text-align: left; white-space: nowrap; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .data-table tbody tr { border-bottom: 1px solid #eef0f4; }
+        .data-table tbody tr:hover { background: #fef9e6; }
+        .data-table tbody tr:nth-child(even) { background: #f8fafc; }
+        .data-table tbody tr:nth-child(even):hover { background: #fef9e6; }
+        .data-table tbody td {
+            padding: 7px 12px; color: #334155;
+            max-width: 220px; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+        .badge-act { background:#dcfce7; color:#166534; padding:2px 8px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+        .badge-ina { background:#fee2e2; color:#991b1b; padding:2px 8px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+
+        /* PAGINATION */
+        .pagination { display:flex; align-items:center; justify-content:center; gap:0.4rem; margin-top:1rem; flex-wrap:wrap; }
+        .page-btn { background:white; border:1.5px solid #dde3ec; border-radius:8px; padding:5px 11px; cursor:pointer; font-size:0.8rem; color:#1e3a5f; font-weight:600; }
+        .page-btn:hover,.page-btn.active { background:#1e3a5f; color:white; border-color:#1e3a5f; }
+        .page-btn:disabled { opacity:0.4; cursor:default; }
+        .page-info { font-size:0.78rem; color:#8a9bb0; }
+
+        .loading { text-align:center; padding:3rem; color:#8a9bb0; }
+        .loading i { font-size:2rem; color:#d4af37; display:block; margin-bottom:0.5rem; }
+        .footer-sori { text-align:center; margin-top:2rem; font-size:0.7rem; color:#5c6f87; border-top:1px solid #cddfe7; padding-top:1rem; }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="header">
+        <div class="shield-small">
+            <img src="../img/escudo-municipio.jpg" alt="Escudo" onerror="this.style.display='none'">
+        </div>
+        <div class="title-group">
+            <h1><i class="fas fa-home" style="color:#d4af37"></i> Predial</h1>
+            <p>SORI · Municipio de Puerto Carreño</p>
+        </div>
+        <a href="../index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Volver</a>
+    </div>
+
+    <div class="filters-bar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar chip, nombre, matrícula…" oninput="applyFilters()">
+        </div>
+
+        <div class="filter-wrap">
+            <select class="filter-select" id="filterEstado" onchange="applyFilters()">
+                <option value="">Estado: Todos</option>
+            </select>
+            <i class="fas fa-chevron-down filter-arrow"></i>
+        </div>
+
+        <div class="filter-wrap">
+            <select class="filter-select" id="filterYear" onchange="applyFilters()">
+                <option value="">Año ingreso: Todos</option>
+            </select>
+            <i class="fas fa-chevron-down filter-arrow"></i>
+        </div>
+
+        <button class="btn-clear" id="btnClear" onclick="clearFilters()">
+            <i class="fas fa-times"></i> Limpiar
+        </button>
+
+        <div id="statsBadge" class="stats-badge">Cargando…</div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>CHIP</th><th>NOMBRE PREDIO</th><th>TELÉFONO</th>
+                    <th>ESTADO</th><th>FECHA INGRESO</th><th>AVALÚO</th>
+                    <th>ÁREA</th><th>MATRÍCULA</th><th>USUARIO</th><th>FECHA MOD.</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="10"><div class="loading"><i class="fas fa-spinner fa-spin"></i>Cargando datos…</div></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+
+    <div class="footer-sori"><i class="fas fa-cloud-upload-alt"></i> SORI · Alcaldía de Puerto Carreño, Vichada</div>
+</div>
+
+<script>
+    const PAGE_SIZE = 60;
+    let allRows = [], filteredRows = [], currentPage = 1;
+
+    // Row layout: [CHIP(0), NOMBRE(1), TEL(2), ESTADO(3), FECHA(4), AVALUO(5), AREA(6), MATRICULA(7), USUARIO(8), FECHA_MOD(9)]
+
+    async function init() {
+        try {
+            const res = await fetch('../data/predial_real.csv');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const text = await res.text();
+            const lines = text.split('\n').filter(l => l.trim() && !l.startsWith('SQL>'));
+            allRows = lines.map(l => {
+                const c = l.split(',').map(p => p.trim());
+                return [c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[14], c[9], c[8]];
+            });
+            buildOptions();
+            filteredRows = allRows.slice();
+            render();
+        } catch(e) {
+            document.getElementById('tableBody').innerHTML =
+                `<tr><td colspan="10" style="text-align:center;padding:2rem;color:#991b1b;">⚠️ ${e.message}</td></tr>`;
+            document.getElementById('statsBadge').textContent = 'Error';
+        }
+    }
+
+    function getYear(fecha) {
+        if (!fecha) return '';
+        const p = fecha.split('-');
+        if (p.length < 3) return '';
+        const yy = parseInt(p[2]);
+        return isNaN(yy) ? '' : (yy > 30 ? 1900 + yy : 2000 + yy).toString();
+    }
+
+    function buildOptions() {
+        const estados = [...new Set(allRows.map(r => r[3]).filter(Boolean))].sort();
+        const sel = document.getElementById('filterEstado');
+        estados.forEach(v => sel.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
+
+        const years = [...new Set(allRows.map(r => getYear(r[4])).filter(Boolean))].sort().reverse();
+        const selY = document.getElementById('filterYear');
+        years.forEach(v => selY.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
+    }
+
+    function applyFilters() {
+        const q      = document.getElementById('searchInput').value.toLowerCase().trim();
+        const estado = document.getElementById('filterEstado').value;
+        const year   = document.getElementById('filterYear').value;
+
+        filteredRows = allRows.filter(r => {
+            if (estado && r[3] !== estado) return false;
+            if (year && getYear(r[4]) !== year) return false;
+            if (q && !r.some(c => (c||'').toLowerCase().includes(q))) return false;
+            return true;
+        });
+
+        currentPage = 1;
+        const hasFilter = q || estado || year;
+        document.getElementById('btnClear').classList.toggle('visible', !!hasFilter);
+        document.getElementById('filterEstado').classList.toggle('active', !!estado);
+        document.getElementById('filterYear').classList.toggle('active', !!year);
+        render();
+    }
+
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('filterEstado').value = '';
+        document.getElementById('filterYear').value = '';
+        applyFilters();
+    }
+
+    function render() {
+        const total = filteredRows.length;
+        const pages = Math.ceil(total / PAGE_SIZE);
+        const slice = filteredRows.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+
+        document.getElementById('statsBadge').textContent =
+            `${total.toLocaleString('es-CO')} predios · pág ${currentPage}/${pages||1}`;
+
+        const tbody = document.getElementById('tableBody');
+        if (!slice.length) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:#8a9bb0;">Sin resultados para los filtros seleccionados.</td></tr>`;
+        } else {
+            tbody.innerHTML = slice.map(r => `<tr>
+                <td title="${r[0]}">${r[0]||'—'}</td>
+                <td title="${r[1]}">${r[1]||'—'}</td>
+                <td>${r[2]||'—'}</td>
+                <td>${r[3]==='ACT' ? '<span class="badge-act">ACT</span>' : r[3] ? `<span class="badge-ina">${r[3]}</span>` : '—'}</td>
+                <td>${r[4]||'—'}</td>
+                <td>${r[5]||'—'}</td>
+                <td>${r[6]||'—'}</td>
+                <td title="${r[7]||''}">${r[7]||'—'}</td>
+                <td>${r[8]||'—'}</td>
+                <td>${r[9]||'—'}</td>
+            </tr>`).join('');
+        }
+
+        const pag = document.getElementById('pagination');
+        if (pages <= 1) { pag.innerHTML = ''; return; }
+        let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+        const s=Math.max(1,currentPage-2), e=Math.min(pages,currentPage+2);
+        if (s>1) html+=`<button class="page-btn" onclick="goPage(1)">1</button><span class="page-info">…</span>`;
+        for(let p=s;p<=e;p++) html+=`<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+        if(e<pages) html+=`<span class="page-info">…</span><button class="page-btn" onclick="goPage(${pages})">${pages}</button>`;
+        html+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+        pag.innerHTML = html;
+    }
+
+    function goPage(p) {
+        const pages = Math.ceil(filteredRows.length / PAGE_SIZE);
+        if (p<1||p>pages) return;
+        currentPage = p;
+        render();
+        window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    init();
+</script>
+</body>
+</html>
