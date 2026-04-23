@@ -143,40 +143,92 @@
             padding-top: 1rem;
         }
 
+        /* ========== MODAL LOGIN ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 {
+            color: #1e3a5f;
+            margin-bottom: 0.5rem;
+        }
+        .modal-content h3 {
+            color: #2c5a7a;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .modal-content select,
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            font-size: 1rem;
+        }
+        .modal-content button {
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        .modal-content button:hover {
+            background: #d4af37;
+            color: #1e3a5f;
+        }
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close-modal:hover {
+            color: black;
+        }
+        .vigencia-note {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 1rem;
+        }
         @media (max-width: 650px) {
-            .grid-buttons {
-                gap: 0.8rem;
-            }
-            .menu-btn {
-                padding: 0.8rem 0.2rem;
-            }
-            .menu-btn i {
-                font-size: 1.5rem;
-            }
-            .menu-btn span {
-                font-size: 0.7rem;
-            }
-            .admin-rectangle {
-                flex-direction: column;
-                gap: 5px;
-            }
-            .shield-small {
-                width: 50px;
-                height: 50px;
-            }
-            .shield-small img {
-                width: 40px;
-            }
-            .title-group h1 {
-                font-size: 1.2rem;
-            }
+            .grid-buttons { gap: 0.8rem; }
+            .menu-btn { padding: 0.8rem 0.2rem; }
+            .menu-btn i { font-size: 1.5rem; }
+            .menu-btn span { font-size: 0.7rem; }
+            .admin-rectangle { flex-direction: column; gap: 5px; }
+            .shield-small { width: 50px; height: 50px; }
+            .shield-small img { width: 40px; }
+            .title-group h1 { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <!-- Header con escudo a la izquierda -->
     <div class="header">
         <div class="shield-small">
             <img src="img/escudo-municipio.jpg" alt="Escudo Puerto Carreño" onerror="this.src='https://via.placeholder.com/50?text=SORI'">
@@ -187,66 +239,64 @@
         </div>
     </div>
 
-    <!-- Grid 3x3 (9 botones) -->
     <div class="grid-buttons">
-        <!-- Fila 1 -->
-        <div class="menu-btn" data-modulo="ingresos">
-            <i class="fas fa-cog"></i>
-            <span>Ingresos</span>
-        </div>
-        <div class="menu-btn" data-modulo="predial">
-            <i class="fas fa-home"></i>
-            <span>Predial</span>
-        </div>
-        <div class="menu-btn" data-modulo="tesoreria">
-            <i class="fas fa-cash-register"></i>
-            <span>Tesorería</span>
-        </div>
-
-        <!-- Fila 2 -->
-        <div class="menu-btn" data-modulo="presupuesto">
-            <i class="fas fa-calculator"></i>
-            <span>Presupuesto</span>
-        </div>
-        <div class="menu-btn" data-modulo="contabilidad">
-            <i class="fas fa-chart-pie"></i>
-            <span>Contabilidad</span>
-        </div>
-        <div class="menu-btn" data-modulo="contratacion">
-            <i class="fas fa-file-signature"></i>
-            <span>Contratación</span>
-        </div>
-
-        <!-- Fila 3 -->
-        <div class="menu-btn" data-modulo="almacen">
-            <i class="fas fa-warehouse"></i>
-            <span>Almacén</span>
-        </div>
-        <div class="menu-btn" data-modulo="nomina">
-            <i class="fas fa-laptop-code"></i>
-            <span>Nómina</span>
-        </div>
-        <div class="menu-btn" data-modulo="informes">
-            <i class="fas fa-print"></i>
-            <span>Informes</span>
-        </div>
+        <div class="menu-btn" data-modulo="ingresos"><i class="fas fa-cog"></i><span>Ingresos</span></div>
+        <div class="menu-btn" data-modulo="predial"><i class="fas fa-home"></i><span>Predial</span></div>
+        <div class="menu-btn" data-modulo="tesoreria"><i class="fas fa-cash-register"></i><span>Tesorería</span></div>
+        <div class="menu-btn" data-modulo="presupuesto"><i class="fas fa-calculator"></i><span>Presupuesto</span></div>
+        <div class="menu-btn" data-modulo="contabilidad"><i class="fas fa-chart-pie"></i><span>Contabilidad</span></div>
+        <div class="menu-btn" data-modulo="contratacion"><i class="fas fa-file-signature"></i><span>Contratación</span></div>
+        <div class="menu-btn" data-modulo="almacen"><i class="fas fa-warehouse"></i><span>Almacén</span></div>
+        <div class="menu-btn" data-modulo="nomina"><i class="fas fa-laptop-code"></i><span>Nómina</span></div>
+        <div class="menu-btn" data-modulo="informes"><i class="fas fa-print"></i><span>Informes</span></div>
     </div>
 
-    <!-- Ficha rectangular para Administrar (abajo, centrada) -->
     <div style="display: flex; justify-content: center; margin-top: 1rem;">
         <div class="menu-btn admin-rectangle" data-modulo="admin">
-            <i class="fas fa-key"></i>
-            <span>Administrar</span>
+            <i class="fas fa-key"></i><span>Administrar</span>
         </div>
     </div>
 
     <div class="footer-sori">
-        <i class="fas fa-cloud-upload-alt"></i> SORI · Plataforma segura en la nube
+        <i class="fas fa-cloud-upload-alt"></i> SORI · Alcaldía de Puerto Carreño, Vichada
+    </div>
+</div>
+
+<!-- MODAL DE LOGIN -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>SIWEB</h2>
+        <h3>Soluciones Integrales de Informática Web</h3>
+        <p><strong>Sistema Web Integrado Municipal</strong></p>
+        <hr style="margin: 1rem 0;">
+        <h3>ACCESO AL SISTEMA</h3>
+        <select id="municipioSelect">
+            <option value="puerto_carreno">Municipio Puerto Carreño</option>
+            <option value="resguardo">Resguardo Indígena</option>
+        </select>
+        <select id="vigenciaSelect">
+            <option value="2026">Vigencia 2026</option>
+            <option value="2025">Vigencia 2025</option>
+            <option value="2024">Vigencia 2024</option>
+            <option value="2023">Vigencia 2023</option>
+            <option value="2022">Vigencia 2022</option>
+            <option value="2021">Vigencia 2021</option>
+            <option value="2020">Vigencia 2020</option>
+            <option value="2019">Vigencia 2019</option>
+            <option value="2018">Vigencia 2018</option>
+            <option value="2017">Vigencia 2017</option>
+            <option value="2016">Vigencia 2016</option>
+        </select>
+        <input type="text" id="usuarioInput" placeholder="Usuario" autocomplete="off">
+        <input type="password" id="passwordInput" placeholder="Password">
+        <button id="ingresarBtn">INGRESAR</button>
+        <div class="vigencia-note">Municipio de Puerto Carreño · Vigencia <span id="vigenciaActual">2026</span></div>
     </div>
 </div>
 
 <script>
-    // Service Worker para Cloudflare / offline
+    // Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             const swCode = `self.addEventListener('install', e => {
@@ -260,29 +310,52 @@
         });
     }
 
-    const acciones = {
-        ingresos: "Módulo Ingresos: Registro de rentas, impuestos y tasas municipales.",
-        predial: "Gestión de Impuesto Predial: Liquidación, histórico y cartera.",
-        tesoreria: "Tesorería: Recaudos, expedición de recibos, pagos proveedores.",
-        presupuesto: "Presupuesto: Apropiaciones, modificaciones, ejecución presupuestal.",
-        contabilidad: "Contabilidad General: PUC, asientos contables, balances.",
-        contratacion: "Contratación: Procesos de compras, contratos supervisión.",
-        almacen: "Almacén e Inventarios: Entradas, salidas, bienes devolutivos.",
-        nomina: "Nómina: Liquidación de sueldos, seguridad social, deducciones.",
-        informes: "Informes financieros y de gestión: reportes personalizados.",
-        admin: "Administración: Gestión de usuarios, roles, parámetros del sistema."
-    };
+    // Modal logic
+    const modal = document.getElementById('loginModal');
+    const closeModal = document.querySelector('.close-modal');
+    let currentModule = '';
 
+    // Abrir modal al hacer clic en cualquier botón .menu-btn
     document.querySelectorAll('.menu-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const modulo = btn.getAttribute('data-modulo');
-            if(modulo && acciones[modulo]) {
-                alert("📌 " + acciones[modulo] + "\n\n🛠️ Demo - Próximamente módulo dedicado.");
-            } else {
-                alert("Acceso directo a " + btn.innerText.trim());
-            }
+            currentModule = btn.getAttribute('data-modulo');
+            modal.style.display = 'flex';
+            document.getElementById('usuarioInput').value = '';
+            document.getElementById('passwordInput').value = '';
+            // Actualizar año en el pie
+            const vigenciaSelect = document.getElementById('vigenciaSelect');
+            const vigenciaSpan = document.getElementById('vigenciaActual');
+            vigenciaSpan.innerText = vigenciaSelect.value;
         });
+    });
+
+    // Cerrar modal
+    closeModal.onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+    // Actualizar texto de vigencia al cambiar select
+    document.getElementById('vigenciaSelect').addEventListener('change', function() {
+        document.getElementById('vigenciaActual').innerText = this.value;
+    });
+
+    // Botón INGRESAR
+    document.getElementById('ingresarBtn').addEventListener('click', () => {
+        const municipio = document.getElementById('municipioSelect').options[document.getElementById('municipioSelect').selectedIndex].text;
+        const vigencia = document.getElementById('vigenciaSelect').value;
+        const usuario = document.getElementById('usuarioInput').value.trim();
+        const password = document.getElementById('passwordInput').value;
+
+        if (!usuario || !password) {
+            alert("❌ Por favor ingrese usuario y contraseña.");
+            return;
+        }
+
+        // Demo: solo muestra los datos ingresados
+        alert(`🔐 Acceso solicitado\n\nMunicipio: ${municipio}\nVigencia: ${vigencia}\nUsuario: ${usuario}\nMódulo: ${currentModule}\n\n✅ En una versión real aquí se validarían las credenciales.`);
+        
+        // Cerrar modal
+        modal.style.display = 'none';
     });
 </script>
 </body>
