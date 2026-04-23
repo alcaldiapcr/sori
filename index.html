@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SORI · Ingresos y Predial</title>
+    <title>SORI · Sistema de Operaciones y Recursos Integrales</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,7 +17,7 @@
             padding: 2rem;
         }
         .main-container {
-            max-width: 1200px;
+            max-width: 1000px;
             width: 100%;
             background: rgba(255,255,255,0.94);
             border-radius: 3rem;
@@ -43,7 +43,7 @@
             background-color: #fef9e6;
             flex-shrink: 0;
         }
-        .shield-small img { width: 50px; height: auto; border-radius: 50%; }
+        .shield-small img { width: 50px; border-radius: 50%; }
         .title-group h1 { font-size: 1.6rem; color: #1e3a5f; }
         .title-group p { color: #2c5a7a; font-size: 0.8rem; }
         .grid-buttons {
@@ -69,7 +69,7 @@
         }
         .menu-btn i { font-size: 2.2rem; color: #d4af37; }
         .menu-btn span { font-size: 0.85rem; }
-        .menu-btn:hover { transform: translateY(-5px); background: #fff8ed; border-color: #d4af37; }
+        .menu-btn:hover { transform: translateY(-5px); background: #fff8ed; }
         .admin-rectangle {
             grid-column: 2 / 3;
             background: #1e3a5f;
@@ -99,28 +99,17 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            vertical-align: top;
         }
-        .content-table th {
-            background-color: #1e3a5f;
-            color: white;
-        }
-        .close-content {
-            float: right;
-            background: #d4af37;
-            border: none;
-            border-radius: 20px;
-            padding: 5px 12px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
+        .content-table th { background-color: #1e3a5f; color: white; }
+        .close-content { float: right; background: #d4af37; border: none; border-radius: 20px; padding: 5px 12px; cursor: pointer; margin-bottom: 10px; }
+        
         .modal {
             display: none;
             position: fixed;
             z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
@@ -147,17 +136,14 @@
             padding: 12px;
             width: 100%;
             border-radius: 40px;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
         }
-        .close-modal {
-            float: right;
-            font-size: 28px;
-            cursor: pointer;
-        }
+        .close-modal { float: right; font-size: 28px; cursor: pointer; }
         @media (max-width: 650px) {
             .grid-buttons { gap: 0.8rem; }
             .menu-btn { padding: 0.8rem 0.2rem; }
+            .menu-btn i { font-size: 1.5rem; }
             .title-group h1 { font-size: 1.2rem; }
         }
     </style>
@@ -165,9 +151,7 @@
 <body>
 <div class="main-container">
     <div class="header">
-        <div class="shield-small">
-            <img src="img/escudo-municipio.jpg" alt="Escudo">
-        </div>
+        <div class="shield-small"><img src="img/escudo-municipio.jpg" alt="Escudo"></div>
         <div class="title-group">
             <h1>SORI · Sistema de Operaciones y Recursos Integrales</h1>
             <p>Municipio de Puerto Carreño · Gestión Transparente</p>
@@ -185,6 +169,7 @@
         <div class="menu-btn" data-modulo="nomina"><i class="fas fa-laptop-code"></i><span>Nómina</span></div>
         <div class="menu-btn" data-modulo="informes"><i class="fas fa-print"></i><span>Informes</span></div>
     </div>
+
     <div style="display: flex; justify-content: center;">
         <div class="menu-btn admin-rectangle" data-modulo="admin"><i class="fas fa-key"></i><span>Administrar</span></div>
     </div>
@@ -206,13 +191,8 @@
         <p>Sistema de Operaciones<br>y Recursos Integrales</p>
         <hr>
         <h3>ACCESO AL SISTEMA</h3>
-        <select id="municipioSelect">
-            <option>Municipio Puerto Carreño</option>
-            <option>Resguardo Indígena</option>
-        </select>
-        <select id="vigenciaSelect">
-            <option>2026</option><option>2025</option><option>2024</option><option>2023</option>
-        </select>
+        <select id="municipioSelect"><option>Municipio Puerto Carreño</option><option>Resguardo Indígena</option></select>
+        <select id="vigenciaSelect"><option>2026</option><option>2025</option><option>2024</option><option>2023</option></select>
         <input type="text" id="usuarioInput" placeholder="Usuario">
         <input type="password" id="passwordInput" placeholder="Password">
         <button id="ingresarBtn">INGRESAR</button>
@@ -235,62 +215,51 @@
         try {
             const response = await fetch(url);
             const text = await response.text();
-            const rows = text.split('\n').filter(r => r.trim());
-            if (rows.length < 2) throw new Error('CSV vacío');
-            const headers = rows[0].split(',');
-            const data = rows.slice(1).map(row => row.split(','));
+            const lines = text.split('\n').filter(l => l.trim() && !l.startsWith('SQL>'));
+            if (lines.length < 2) throw new Error('CSV sin datos');
+            const data = lines.map(l => l.split(','));
+            const headers = data[0];
+            const rows = data.slice(1);
             let html = `<h3>📋 ${title}</h3><div style="overflow-x:auto;"><table class="content-table"><thead><tr>`;
-            headers.forEach(h => html += `<th>${h.trim()}</th>`);
-            html += `</tr></thead><tbody>`;
-            data.slice(0, 50).forEach(row => {
+            headers.forEach(h => html += `<th>${h.trim().substring(0, 30)}</th>`);
+            html += `</thead><tbody>`;
+            rows.slice(0, 50).forEach(row => {
                 html += `<tr>`;
-                row.forEach(cell => html += `<td>${cell.trim() || '—'}</td>`);
-                html += `</tr>`;
+                row.forEach(cell => html += `<td>${(cell || '').trim().substring(0, 60)}</td>`);
+                html += `</td>`;
             });
-            html += `</tbody></table><p>🔍 Mostrando ${data.length} registros (máx 50)</p></div>`;
+            html += `</tbody></table><p>🔍 Mostrando ${rows.length} registros (máx 50)</p></div>`;
             dynamicContent.innerHTML = html;
             contentArea.style.display = 'block';
         } catch (error) {
-            showMessage(`⚠️ No se pudo cargar ${title}: ${error.message}`);
+            showMessage(`⚠️ Error: ${error.message}`);
         }
-    }
-
-    function promptLogin(module) {
-        pendingModule = module;
-        modal.style.display = 'flex';
     }
 
     document.querySelectorAll('.menu-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            const modulo = btn.getAttribute('data-modulo');
-            promptLogin(modulo);
+            pendingModule = btn.getAttribute('data-modulo');
+            modal.style.display = 'flex';
         });
     });
 
     document.getElementById('ingresarBtn').addEventListener('click', () => {
         const usuario = document.getElementById('usuarioInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
-        if (!usuario || !password) {
-            alert("Ingrese usuario y contraseña (cualquier valor)");
-            return;
-        }
+        if (!usuario || !password) { alert("Ingrese usuario y contraseña"); return; }
         modal.style.display = 'none';
-        if (pendingModule === 'ingresos') {
-            loadCSV('data/ingresos_reales.csv', 'INGRESOS - Datos Reales');
-        } else if (pendingModule === 'predial') {
-            loadCSV('data/predial_real.csv', 'PREDIAL - Datos Reales');
-        } else {
-            showMessage(`🚧 Módulo "${pendingModule?.toUpperCase()}" en construcción.`);
-        }
+        if (pendingModule === 'ingresos') loadCSV('data/ingresos_reales.csv', 'INGRESOS');
+        else if (pendingModule === 'predial') loadCSV('data/predial_real.csv', 'PREDIAL');
+        else showMessage(`🚧 Módulo "${pendingModule}" en construcción.`);
         pendingModule = null;
     });
 
     closeModal.onclick = () => modal.style.display = 'none';
     window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-    document.getElementById('closeContentBtn').addEventListener('click', () => {
+    document.getElementById('closeContentBtn').onclick = () => {
         contentArea.style.display = 'none';
         dynamicContent.innerHTML = 'Seleccione un módulo para ver los datos.';
-    });
+    };
 </script>
 </body>
 </html>
